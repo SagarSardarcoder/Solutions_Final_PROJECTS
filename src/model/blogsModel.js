@@ -19,7 +19,7 @@ const blogSchema = new mongoose.Schema({
 
     },
     tags: [{
-        type: string
+        type: String
     }],
 
     category: {
@@ -31,20 +31,20 @@ const blogSchema = new mongoose.Schema({
         type: String
     }], // { array of string, examples[technology - [web development, mobile development, AI, ML etc]] },
 
-    createdAt: { timestamps: true },
-    updatedAt: { timestamps: true },
-    deletedAt: { timestamps: true },
+    // createdAt: { timestamps: true },
+    // updatedAt: { timestamps: true },
+    // deletedAt: { timestamps: true },
     isDeleted: {
-        type: boolean,
+        type: Boolean,
         default: false
     },
-    publishedAt: { timestamps: true }, //// { when the blog is published },
+    // publishedAt: { timestamps: true }, //// { when the blog is published },
     isPublished: {
-        type: boolean,
+        type: Boolean,
         default: false
     }
 
 
-})
+},{ timestamps: true })
 
 module.exports = mongoose.model('Blogs', blogSchema)
