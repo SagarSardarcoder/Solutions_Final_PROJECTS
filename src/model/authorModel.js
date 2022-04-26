@@ -1,5 +1,9 @@
 const mongoose = require('mongoose')
-require('mongoose-type-email');
+let validateEmail = function(email) {
+    let re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
+};
+
 const authorSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -15,20 +19,18 @@ const authorSchema = new mongoose.Schema({
         type: String,
         enum: ["Mr", "Mrs", "Miss"]
     },
-    email: mongoose.SchemaTypes.Email,
-
-
-    //     type: String,
-    //     trim: true,
-    //     lowercase: true,
-    //     unique: true,
-    //     required: true,
-    //     validate: [validateEmail, 'Please fill a valid email address'],
-    //    // match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
-
+    email: { 
+        type: String,
+        trim: true,
+        lowercase: true,
+        unique: true,
+        required: true,
+        validate: [validateEmail],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/]
+    },
     password: {
         type: String,
-        required: true
+        required: true 
     }
 
 })
