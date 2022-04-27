@@ -2,7 +2,7 @@ const autherModel = require("../model/authorModel")
 const blogsModel = require("../model/blogsModel")
 const moment = require('moment')
 
-let createBlog = async function(req, res) {
+let createBlog = async function (req, res) {
     try {
         let data = req.body
         let id = data.authorId
@@ -18,7 +18,7 @@ let createBlog = async function(req, res) {
         res.status(500).send({ error: err.message })
     }
 }
-const getBlogs = async function(req, res) {
+const getBlogs = async function (req, res) {
 
     try {
 
@@ -34,13 +34,11 @@ const getBlogs = async function(req, res) {
         }
 
     } catch (err) {
-        res.status(400).send({ status: false, msg: err.message });
+        res.status(500).send({ status: false, msg: err.message });
     }
-
-
 }
 
-const putBlogs = async function(req, res) {
+const putBlogs = async function (req, res) {
     try {
         let data = req.body
         let id = req.params.blogId
@@ -50,30 +48,25 @@ const putBlogs = async function(req, res) {
         if (!findblog) return res.status(404).send({ msg: "blogid invalid" })
         if (findblog.isDeleted == true) return res.status(404).send({ msg: "Blog is already deleted " })
         if (findblog.isDeleted == false) {
-            let updatedBlog = await blogsModel.findOneAndUpdate({ _id: id }, {
+            let updatedBlog = await blogsModel.findOneAndUpdate({ _id: id },
+               {
                 $set: {
                     title: data.title,
                     body: data.body,
                     category: data.category,
                     publishedAt: moment().format(),
-                    isPublished: true,
-                    // tags: req.body.tags,
-                    // subcategory: req.body.subcategory
-
+                    isPublished: true
                 },
                 $push: {
                     tags: req.body.tags,
                     subcategory: req.body.subcategory
                 }
-
-
-            }, { new: true, upsert: true })
+              }
+            , { new: true, upsert: true })
             return res.status(200).send(updatedBlog)
         }
-
-
     } catch (err) {
-        res.status(400).send({ status: false, msg: err.message });
+        res.status(500).send({ status: false, msg: err.message });
     }
 }
 

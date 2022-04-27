@@ -15,8 +15,6 @@ const authorCreate = async function(req, res) {
                 res.status(200).send({ msg: data });
             }
             res.send({ msg: "author is already present" })
-
-
         } else {
             res.status(400).send("Invalid Email")
         }
