@@ -75,7 +75,7 @@ let deleted = async function(req, res) {
         if (!idvalidation) return res.status(404).send({ status: false, msg: "invalid blog id" })
         if (idvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
         if (idvalidation.isDeleted == false) {
-            let deletion = await blogsModel.findOneAndUpdate({ _id: id }, { isDeleted: true })
+            let deletion = await blogsModel.findOneAndUpdate({ _id: id }, {$set:{ isDeleted: true ,deletedAt: moment().format()}})
             return res.status(200).send({ status: true, msg: "blog is deleted successfully" })
         }
     } catch (err) {
@@ -87,15 +87,13 @@ let queryDeleted = async function(req, res) {
     try {
         let Data = req.query
         if (!Data) return res.status(404).send({ status: false, msg: "query params is not given " })
-        let idvalidation = await blogsModel.findOne({ Data })
-        if (!idvalidation) return res.status(404).send({ status: false, msg: "blog does not exist" })
-        if (idvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
-        if (idvalidation.isDeleted == false) {
-            let deletion = await blogsModel.findOneAndUpdate({ Data }, { isDeleted: true })
+        let blogvalidation = await blogsModel.findOne({Data})
+        if (!blogvalidation) return res.status(404).send({ status: false, msg: "blog does not exist" })
+        if (blogvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
+        if (blogvalidation.isDeleted == false) {
+            let deletion = await blogsModel.findOneAndUpdate({ Data },{ $set:{ isDeleted: true ,deletedAt: moment().format()}})
             return res.status(200).send({ status: true, msg: "blog is deleted successfully" })
         }
-
-
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message });
     }

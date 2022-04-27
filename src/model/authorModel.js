@@ -15,7 +15,11 @@ const authorSchema = new mongoose.Schema({
         type: String,
         enum: ["Mr", "Mrs", "Miss"]
     },
-    email:"string",
+    email:{
+        type:String,
+        unique:true,
+        required:true
+    },
     password: {
         type: String,
         required: true 
