@@ -2,7 +2,7 @@ const autherModel = require("../model/authorModel")
 const blogsModel = require("../model/blogsModel")
 const moment = require('moment')
 
-let createBlog = async function (req, res) {
+let createBlog = async function(req, res) {
     try {
         let data = req.body
         let id = data.authorId
@@ -18,7 +18,7 @@ let createBlog = async function (req, res) {
         res.status(500).send({ error: err.message })
     }
 }
-const getBlogs = async function (req, res) {
+const getBlogs = async function(req, res) {
 
     try {
 
@@ -38,7 +38,7 @@ const getBlogs = async function (req, res) {
     }
 }
 
-const putBlogs = async function (req, res) {
+const putBlogs = async function(req, res) {
     try {
         let data = req.body
         let id = req.params.blogId
@@ -48,8 +48,7 @@ const putBlogs = async function (req, res) {
         if (!findblog) return res.status(404).send({ msg: "blogid invalid" })
         if (findblog.isDeleted == true) return res.status(404).send({ msg: "Blog is already deleted " })
         if (findblog.isDeleted == false) {
-            let updatedBlog = await blogsModel.findOneAndUpdate({ _id: id },
-               {
+            let updatedBlog = await blogsModel.findOneAndUpdate({ _id: id }, {
                 $set: {
                     title: data.title,
                     body: data.body,
@@ -61,27 +60,50 @@ const putBlogs = async function (req, res) {
                     tags: req.body.tags,
                     subcategory: req.body.subcategory
                 }
-              }
-            , { new: true, upsert: true })
+            }, { new: true, upsert: true })
             return res.status(200).send(updatedBlog)
         }
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message });
     }
 }
-let deleted = async function (req,res){
-    let id = req.params.blogId
-    if(!id) return res.status(404).send({msg: "blog id is required"})
-    let idvalidation = await blogsModel.findById(id)
-    if(!idvalidation) return res.status(404).send({msg: "invalid blog id"})
-    if (idvalidation.isDeleted==true) return res.status(404).send({msg : " blog is allready deleted"}) 
-   if(idvalidation.isDeleted==false){
-       let deletion = await blogsModel.findOneAndUpdate({_id:id},{isDeleted:true})
-       return res.status(200).send({msg: "blog is deleted successfully"}) 
-   }
+let deleted = async function(req, res) {
+    try {
+        let id = req.params.blogId
+        if (!id) return res.status(404).send({ status: false, msg: "blog id is required" })
+        let idvalidation = await blogsModel.findById(id)
+        if (!idvalidation) return res.status(404).send({ status: false, msg: "invalid blog id" })
+        if (idvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
+        if (idvalidation.isDeleted == false) {
+            let deletion = await blogsModel.findOneAndUpdate({ _id: id }, { isDeleted: true })
+            return res.status(200).send({ status: true, msg: "blog is deleted successfully" })
+        }
+    } catch (err) {
+        res.status(500).send({ status: false, msg: err.message });
+    }
 }
 
+let queryDeleted = async function(req, res) {
+    try {
+        let Data = req.query
+        if (!Data) return res.status(404).send({ status: false, msg: "query params is not given " })
+        let idvalidation = await blogsModel.findOne({ Data })
+        if (!idvalidation) return res.status(404).send({ status: false, msg: "blog does not exist" })
+        if (idvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
+        if (idvalidation.isDeleted == false) {
+            let deletion = await blogsModel.findOneAndUpdate({ Data }, { isDeleted: true })
+            return res.status(200).send({ status: true, msg: "blog is deleted successfully" })
+        }
 
+
+    } catch (err) {
+        res.status(500).send({ status: false, msg: err.message });
+    }
+
+
+}
+
+module.exports.queryDeleted = queryDeleted
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
 module.exports.putBlogs = putBlogs
