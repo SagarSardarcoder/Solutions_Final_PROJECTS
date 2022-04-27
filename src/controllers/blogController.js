@@ -69,8 +69,20 @@ const putBlogs = async function (req, res) {
         res.status(500).send({ status: false, msg: err.message });
     }
 }
+let deleted = async function (req,res){
+    let id = req.params.blogId
+    if(!id) return res.status(404).send({msg: "blog id is required"})
+    let idvalidation = await blogsModel.findById(id)
+    if(!idvalidation) return res.status(404).send({msg: "invalid blog id"})
+    if (idvalidation.isDeleted==true) return res.status(404).send({msg : " blog is allready deleted"}) 
+   if(idvalidation.isDeleted==false){
+       let deletion = await blogsModel.findOneAndUpdate({_id:id},{isDeleted:true})
+       return res.status(200).send({msg: "blog is deleted successfully"}) 
+   }
+}
 
 
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
 module.exports.putBlogs = putBlogs
+module.exports.deleted = deleted
