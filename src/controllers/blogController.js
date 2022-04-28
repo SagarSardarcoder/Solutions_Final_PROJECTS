@@ -86,12 +86,15 @@ let deleted = async function(req, res) {
 let queryDeleted = async function(req, res) {
     try {
         let Data = req.query
+        let filter = {...Data}
         if (!Data) return res.status(404).send({ status: false, msg: "query params is not given " })
-        let blogvalidation = await blogsModel.findOne({Data})
+        let blogvalidation = await blogsModel.findOne(filter)
         if (!blogvalidation) return res.status(404).send({ status: false, msg: "blog does not exist" })
         if (blogvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
         if (blogvalidation.isDeleted == false) {
-            let deletion = await blogsModel.findOneAndUpdate({ Data },{ $set:{ isDeleted: true ,deletedAt: moment().format()}})
+            let idList = blogvalidation._id
+            console.log(idList)
+            let deletion = await blogsModel.findOneAndUpdate(filter,{ $set:{ isDeleted: true ,deletedAt: moment().format()}})
             return res.status(200).send({ status: true, msg: "blog is deleted successfully" })
         }
     } catch (err) {
@@ -105,4 +108,4 @@ module.exports.queryDeleted = queryDeleted
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
 module.exports.putBlogs = putBlogs
-module.exports.deleted = deleted
+module.exports.deleted = deleted 
