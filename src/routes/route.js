@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const autherController = require('../controllers/autherController')
-let blogController = require('../controllers/blogController')
+const blogController = require('../controllers/blogController')
+const midd = require('../middleware/auth')
+
 
 /////////////////////   blogs  ////////////////////////////////////
-router.post('/createBlog', blogController.createBlog)
-router.get('/getBlogs', blogController.getBlogs)
-router.put('/blogs/:blogId', blogController.putBlogs)
-router.delete('/blogs/:blogId', blogController.deleted)
-router.delete('/blog', blogController.queryDeleted)
+router.post('/createAuther',autherController.authorCreate)
+router.post('/createBlog',midd.authentication, blogController.createBlog)
+router.get('/getBlogs',midd.authentication, blogController.getBlogs)
+router.put('/blogs/:blogId',midd.authentication,midd.authorization, blogController.putBlogs)
+router.delete('/blogs/:blogId',midd.authentication, midd.authorization,blogController.deleted)
+router.delete('/blog', midd.authentication,midd.authorization,blogController.queryDeleted)
 
 //////////////////phase-2////////////////////
 
