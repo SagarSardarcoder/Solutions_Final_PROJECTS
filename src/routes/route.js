@@ -11,7 +11,7 @@ router.post('/createBlog',midd.authentication, blogController.createBlog)
 router.get('/getBlogs',midd.authentication, blogController.getBlogs)
 router.put('/blogs/:blogId',midd.authentication,midd.authorization, blogController.putBlogs)
 router.delete('/blogs/:blogId',midd.authentication, midd.authorization,blogController.deleted)
-router.delete('/blog', midd.authentication,midd.authorization,blogController.queryDeleted)
+router.delete('/blog', midd.authentication,midd.authorizationQuery,blogController.queryDeleted)
 
 //////////////////phase-2////////////////////
 

@@ -26,9 +26,9 @@ const loginAuthor = async function(req, res) {
         let userName = req.body.email
         let password = req.body.password
         if (!userName && !password) return res.status(404).send({ status: false, msg: "please Enter userName And Password" })
-        let Author = await authorModel.findOne({ $in: [{ email: userName }, { password: password }] })
+        let Author = await authorModel.findOne({ $and: [{ email: userName }, { password: password }] })
         if (!Author) return res.status(404).send({ status: false, msg: "Author is not found" })
-        
+
         let token = jwt.sign({ authorId: Author._id.toString() }, 'Group-46')
         res.setHeader("x-api-key", token)
         res.status(200).send({ msg: token })

@@ -33,12 +33,12 @@ const blogSchema = new mongoose.Schema({
 
     // createdAt: { type: Date, required: true, default: Date.now },
     // updatedAt: { type: Date, required: true, default: Date.now },
-    deletedAt: { type: String, default: "" },
+    deletedAt: { type: String},
     isDeleted: {
         type: Boolean,
         default: false
     },
-    publishedAt: { type: String, default: "" }, //// { when the blog is published },
+    publishedAt: { type: String}, //// { when the blog is published },
     isPublished: {
         type: Boolean,
         default: false
