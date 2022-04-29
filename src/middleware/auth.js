@@ -1,16 +1,15 @@
 const req = require('express/lib/request');
 const jwt = require('jsonwebtoken');
-const authorModel = require('../model/authorModel');
 const blogsModel = require('../model/blogsModel');
 
 const authentication = async function (req, res, next) {
     try {
 
-        let token = req.headers["X-API-key"]
+        let token = req.headers["X-API-KEY"]
         if (!token) token = req.headers["x-api-key"]
         if (!token) return res.status(404).send({ status: false, msg: "token is required" })
 
-        let decodToken = jwt.verify(token, "Group-46");
+        let decodToken = jwt.verify(token,"Group-46");
         if (!decodToken) return res.status(401).send({ status: false, msg: "Token is not verified" })
         next()
     } catch (err) {
@@ -19,7 +18,7 @@ const authentication = async function (req, res, next) {
 }
 const authorization = async function (req, res, next) {
     try {
-        let token = req.headers["X-API-key"]
+        let token = req.headers["X-API-KEY"]
         if (!token) token = req.headers["x-api-key"]
         if (!token) return res.status(404).send({ status: false, msg: "token is required" })
 
@@ -40,7 +39,7 @@ const authorization = async function (req, res, next) {
 }
 const authorizationQuery = async function (req, res, next) {
    try{ 
-       let token = req.headers["X-API-key"]
+       let token = req.headers["X-API-KEY"]
     if (!token) token = req.headers["x-api-key"]
     if (!token) return res.status(404).send({ status: false, msg: "token is required" })
 
