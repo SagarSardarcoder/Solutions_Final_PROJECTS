@@ -12,7 +12,7 @@ const authorCreate = async function(req, res) {
             if (isPresent.length === 0) {
                 let data = await authorModel.create(content);
                 res.status(200).send({ msg: data });
-            } else return res.send({ msg: "author is already present" })
+            } else return res.send({ msg:"author is already present with this email id"})
         } else {
             return res.status(400).send("Invalid Email")
         }

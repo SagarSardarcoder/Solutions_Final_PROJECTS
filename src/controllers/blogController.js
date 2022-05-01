@@ -92,8 +92,8 @@ let queryDeleted = async function(req, res) {
         if (!blogvalidation) return res.status(404).send({ status: false, msg: "blog does not exist" })
         if (blogvalidation.isDeleted == true) return res.status(404).send({ status: false, msg: " blog is allready deleted" })
         if (blogvalidation.isDeleted == false) {
-            let idList = blogvalidation._id
-            console.log(idList)
+            // let idList = blogvalidation._id
+            // console.log(idList)
             let deletion = await blogsModel.findOneAndUpdate(filter,{ $set:{ isDeleted: true ,deletedAt: moment().format()}})
             return res.status(200).send({ status: true, msg: "blog is deleted successfully" })
         }
