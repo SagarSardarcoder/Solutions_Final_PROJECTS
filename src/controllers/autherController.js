@@ -12,6 +12,8 @@ const authorCreate = async function(req, res) {
             let isPresent = await authorModel.find({ email: email });
 
             if (isPresent.length === 0) {
+                if (content.isPublished == true)
+                content["publishedAt"] = new Date();
                 let data = await authorModel.create(content);
                 res.status(200).send({ msg: data });
             } else return res.send({ msg:"author is already present with this email id"})
