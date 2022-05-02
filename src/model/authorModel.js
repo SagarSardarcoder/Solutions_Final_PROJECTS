@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 
 const authorSchema = new mongoose.Schema({
-    fName: {
+    fname: {
         type: String,
         required: true
     },
 
-    lName: {
+    lname: {
         type: String,
         required: true
     },
