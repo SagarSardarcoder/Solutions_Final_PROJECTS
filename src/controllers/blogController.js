@@ -8,6 +8,8 @@ let createBlog = async function(req, res) {
         let id = data.authorId
 
         if (!id) return res.status(400).send({ status: false, msg: "authorId is required" })
+        if(!data.title) res.status(400).send({ status: false, msg: "title is required" })
+        if(!data.body) res.status(400).send({ status: false, msg: "body is required" })
         let findAuthor = await autherModel.findById(id)
         if (!findAuthor) return res.status(404).send({ msg: "authorId invalid" })
         if (content.isPublished == true)
@@ -44,9 +46,10 @@ const putBlogs = async function(req, res) {
         let data = req.body
         let id = req.params.blogId
 
-        if (!id) return res.status(400).send({ status: false, msg: "blogid is required" })
-        let findblog = await blogsModel.findById(id)
-        if (!findblog) return res.status(404).send({ msg: "blogid invalid" })
+        // if (!id) return res.status(400).send({ status: false, msg: "blogid is required" })
+        // let findblog = await blogsModel.findById(id)
+        // console.log(findblog)
+        // if (!findblog) return res.status(404).send({ msg: "blogid invalid" })
         if (findblog.isDeleted == true) return res.status(404).send({ msg: "Blog is already deleted " })
         if (findblog.isDeleted == false) {
             let updatedBlog = await blogsModel.findOneAndUpdate({ _id: id }, {

@@ -20,10 +20,13 @@ const authorization = async function (req, res, next) {
     try {
         let token = req.headers["X-API-KEY"]
         if (!token) token = req.headers["x-api-key"]
-        if (!token) return res.status(404).send({ status: false, msg: "token is required" })
+        if (!token) return res.status(400).send({ status: false, msg: "token is required" })
 
         let data = req.params.blogId
+        if(!data) return res.status(400).send({msg:"blogId is required"})
         let blog = await blogsModel.findById(data)
+        // console.log(blog)
+        if(!blog) return res.status(400).send({msg:"invalid blog ID"})
         // console.log(blog.authorId)
         let decodToken = jwt.verify(token, "Group-46");
         // console.log(decodToken.authorId)
@@ -45,6 +48,7 @@ const authorizationQuery = async function (req, res, next) {
 
     let queryData = req.query
     let blog = await blogsModel.findOne({...queryData})
+    if(!blog) return res.status(400).send({msg:"give a valid quary"})
     let decodToken = jwt.verify(token, "Group-46");
 
     if (blog.authorId.toString() === decodToken.authorId) {

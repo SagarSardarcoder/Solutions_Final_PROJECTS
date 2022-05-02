@@ -6,8 +6,12 @@ const authorCreate = async function(req, res) {
     try {
         let content = req.body;
         let email = req.body.email;
-        if(!email) return res.send({msg:"email is required"})
         if(!content.fname) return res.send({msg:"fname is required"})
+        if(!content.lname) return res.send({msg:"lname is required"})
+        if(!content.title) return res.send({msg:"lname is required"})
+        if(!content.password) return res.send({msg:"password is required"})
+        if(!email) return res.send({msg:"email is required"})
+        
         if (emailvalidator.validate(email)) {
             let isPresent = await authorModel.find({ email: email });
 
