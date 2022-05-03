@@ -1,43 +1,60 @@
 const authorModel = require('../model/authorModel');
 const emailvalidator = require("email-validator");
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const isValidReqBody = function (reqBody) {
+    return Object.keys(reqBody).length > 0
+}
+const isValid = function (value) {
+    if (typeof value == 'undefined' || typeof value == null) return false;
+    if (typeof value == 'string' && value.trim().length == 0) return false;
+    return true
+}
 
-const authorCreate = async function(req, res) {
+
+const authorCreate = async function (req, res) {
     try {
         let content = req.body;
         let email = req.body.email;
-        if(!content.fname) return res.send({msg:"fname is required"})
-        if(!content.lname) return res.send({msg:"lname is required"})
-        if(!content.title) return res.send({msg:"lname is required"})
-        if(!content.password) return res.send({msg:"password is required"})
-        if(!email) return res.send({msg:"email is required"})
-        
-        if (emailvalidator.validate(email)) {
-            let isPresent = await authorModel.find({ email: email });
-
-            if (isPresent.length === 0) {
-                let data = await authorModel.create(content);
-                res.status(201).send({ msg: data });
-            } else return res.send({ msg:"author is already present with this email id"})
-        } else {
-            return res.status(400).send("Invalid Email")
+        if (!isValidReqBody(content)) return res.status(400).send({ status: false, msg: "please provide author details" })
+        if (!isValid(content.fname)) return res.status(400).send({ status: false, msg: "first name is required" })
+        if (!isValid(content.lname)) return res.status(400).send({ status: false, msg: "last name is required" })
+        if (!isValid(content.title)) return res.status(400).send({ status: false, msg: "title is required" })
+        const isValidTitle = function (title) {
+            return ["Mr", "Mrs", "Miss", "Mas"].indexOf(title) !== -1
         }
+        if (!isValidTitle(content.title)) return res.status(400).send({ status: false, msg: "title include only Mr ,Mrs ,Miss ,Mas" })
+        if (!isValid(content.password)) return res.status(400).send({ status: false, msg: "password is required" })
+        if (!isValid(email)) return res.status(400).send({ status: false, msg: "email is required" })
+
+        if (!emailvalidator.validate(email)) return res.status(400).send({ status: false, msg: "Invalid Email" })
+
+        let isPresent = await authorModel.findOne({ email: email });
+        if (isPresent) return res.send({ status: false, msg: `author is already present with ${email} email address` })
+        let data = await authorModel.create(content);
+        res.status(201).send({ status: true, msg: "auther registered successfully", data: data });
     } catch (err) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 }
 
-const loginAuthor = async function(req, res) {
+const loginAuthor = async function (req, res) {
     try {
         let userName = req.body.email
         let password = req.body.password
-        if (!userName && !password) return res.status(404).send({ status: false, msg: "please Enter userName And Password" })
+        if (!isValid(userName)) return res.status(400).send({ status: false, msg: "please Enter email" })
+        if (!isValid(password)) return res.status(400).send({ status: false, msg: "please Enter Password" })
         let Author = await authorModel.findOne({ $and: [{ email: userName }, { password: password }] })
-        if (!Author) return res.status(404).send({ status: false, msg: "Author is not found" })
+        if (!Author) return res.status(404).send({ status: false, msg: "invalid login credentials" })
 
-        let token = jwt.sign({ authorId: Author._id.toString() }, 'Group-46')
+        let token = jwt.sign({
+            authorId: Author._id.toString(),
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60
+        },
+            'Group-46@secreteKey//@@blog@@project'
+        )
         res.setHeader("x-api-key", token)
-        res.status(200).send({ msg: token })
+        res.status(200).send({ status: true, msg: "author log in successfull", data: { token } })
     } catch (err) {
         console.log(err.message)
         res.status(500).send({ error: err.message })

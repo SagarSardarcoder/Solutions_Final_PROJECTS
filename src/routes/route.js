@@ -6,9 +6,9 @@ const midd = require('../middleware/auth')
 
 
 /////////////////////   blogs  ////////////////////////////////////
-router.post('/createAuther',autherController.authorCreate)
-router.post('/createBlog',midd.authentication, blogController.createBlog)
-router.get('/getBlogs',midd.authentication, blogController.getBlogs)
+router.post('/authors',autherController.authorCreate)
+router.post('/blogs',midd.authentication, blogController.createBlog)
+router.get('/blogs',midd.authentication, blogController.getBlogs)
 router.put('/blogs/:blogId',midd.authentication,midd.authorization, blogController.putBlogs)
 router.delete('/blogs/:blogId',midd.authentication, midd.authorization,blogController.deleted)
 router.delete('/blog', midd.authentication,midd.authorizationQuery,blogController.queryDeleted)
